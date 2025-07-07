@@ -1,0 +1,57 @@
+/* User purchase platform.
+-- The table logs the spendings history of users that make purchases from an online shopping website which has a desktop 
+and a mobile application.
+-- Write an SQL query to find the total number of users and the total amount spent using mobile only, desktop only 
+and both mobile and desktop together for each date.
+*/
+
+
+
+create table spending 
+(
+user_id int,
+spend_date date,
+platform varchar(10),
+amount int
+);
+
+insert into spending values(1,'2019-07-01','mobile',100),(1,'2019-07-01','desktop',100),(2,'2019-07-01','mobile',100)
+,(2,'2019-07-02','mobile',100),(3,'2019-07-01','desktop',100),(3,'2019-07-02','desktop',100);
+
+
+
+select * from spending;
+
+with all_spending as (
+select spend_date, user_id, max(platform) as platform ,sum(amount) as amount
+from spending
+group by spend_date, user_id
+having count(platform) = 1
+union all
+select spend_date, user_id, 'both' as platform ,sum(amount) as amount
+from spending
+group by spend_date, user_id
+having count(platform) = 2) 
+
+select spend_date, platform, sum(amount) as amount, count(distinct user_id) as total_user
+from all_spending
+group by spend_date, platform
+order by spend_date,platform desc
+
+
+-------------------------------------------------------------------------------------------------------------------------------------
+
+with cte as(
+ select case when STRING_AGG(platform,',')='mobile,desktop' then 'both' else STRING_AGG(platform,',') end
+ as pf,spend_date,user_id,sum(amount) Total,count(distinct user_id ) cnt
+ from spending group by spend_date,user_id 
+ ),
+ cte2 as (
+ select * from cte 
+ union all
+ select distinct 'both' as pf,spend_date,null as user_id, 0 as total,0 as cnt
+ from spending )
+
+ select pf,spend_date, sum(total)totalamount,count(distinct user_id)totalusers from cte2 
+ group by spend_date,pf 
+ order by 1 desc
