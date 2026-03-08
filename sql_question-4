@@ -45,6 +45,8 @@ insert into user_table (user_id, segment) values
 ('u10', 's3');
 
 
+------------------------------------------------------------------------------------------------
+
 Q1 . user booked between '2022-04-01' and '2022-04-30'
 
 select 
@@ -58,3 +60,20 @@ left join
 group by 
 	u.segment;
 
+---------------------------------------------------------------------------------------------
+
+Q2. find users who's first booking is Hotel.
+
+select 
+	*
+from (
+  select 
+      *,
+      row_number() over( partition by user_id order by booking_date ) as rn 
+  from 
+	  Booking_table
+) as a
+where
+	a.rn = 1 and line_of_business = 'Hotel';
+
+---------------------------------------------------------------------------------------------------------------
