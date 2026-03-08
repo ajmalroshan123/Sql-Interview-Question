@@ -77,3 +77,18 @@ where
 	a.rn = 1 and line_of_business = 'Hotel';
 
 ---------------------------------------------------------------------------------------------------------------
+
+
+Q3.  write a query to calculate the days between first and last booking of the user_id = 1
+
+select 
+	user_id,	
+	DATEDIFF(max(booking_date), MIN(booking_date)) as no_of_days
+from 
+	Booking_table
+group by
+	user_id;
+
+
+---------------------------------------------------------------------------------------------------------------------
+
