@@ -92,3 +92,23 @@ group by
 
 ---------------------------------------------------------------------------------------------------------------------
 
+
+Q4 . Count the number of flight and hotel booking in each of the user segment for the year 2022
+
+select
+	u.segment,
+    sum(case when b.line_of_business = 'FLight' then 1 else 0) as flight_count,
+	sum(case when b.line_of_business = 'Hotel' then 1 else 0) as Hotel_count,
+from 
+	User_table u
+left join 
+	Booking_table b on u.user_id = b.user_id
+group by 
+	u.segment;
+
+
+----------------------------------------------------------------------------------------------------------------------------
+
+
+
+
